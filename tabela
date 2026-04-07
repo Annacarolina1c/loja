@@ -1,158 +1,141 @@
-<?php
-$conn = new mysqli("localhost", "root", "", "loja");
-
-if ($conn->connect_error) {
-    die("Erro: " . $conn->connect_error);
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-    // CLIENTE
-    $nome = $_POST['nome'] ?? '';
-    $cpf = $_POST['cpf'] ?? '';
-
-    // ENDEREÇO
-    $endereco = $_POST['endereco'] ?? '';
-    $rua = $_POST['rua'] ?? '';
-    $bairro = $_POST['bairro'] ?? '';
-    $cep = $_POST['cep'] ?? '';
-    $numero = $_POST['numero'] ?? '';
-    $complemento = $_POST['complemento'] ?? '';
-
-    // FORNECEDOR
-    $nomeF = $_POST['nome_fornecedor'] ?? '';
-    $cnpjF = $_POST['cnpj_fornecedor'] ?? '';
-    $produto = $_POST['produto_calca'] ?? '';
-    $precoForn = $_POST['preco_fornecedor'] ?? '';
-
-    // ESTOQUE
-    $qnt = $_POST['qntdo_calca'] ?? '';
-    $precoVenda = $_POST['preco_venda'] ?? '';
-
-    // VENDEDOR (NOVO)
-    $nomeV = $_POST['nome_vendedor'] ?? '';
-    $qntVendas = $_POST['qntdo_vendas'] ?? '';
-    $clientesV = $_POST['cliente_vendas'] ?? '';
-
-    // VENDA
-    $quantidadeVenda = $_POST['quantidade'] ?? '';
-
-    if (empty($nome) || empty($cpf)) {
-        echo "Preencha cliente!";
-    } else {
-
-        // 🔹 CLIENTE
-        $stmt1 = $conn->prepare("INSERT INTO cliente (nome, cpf) VALUES (?, ?)");
-        $stmt1->bind_param("ss", $nome, $cpf);
-        $stmt1->execute();
-
-        // 🔹 ENDEREÇO
-        $stmt2 = $conn->prepare("INSERT INTO endereco 
-        (Endereco, Rua, Bairro, Cep, Numero, Complemento)
-        VALUES (?, ?, ?, ?, ?, ?)");
-
-        $stmt2->bind_param("sssiss", $endereco, $rua, $bairro, $cep, $numero, $complemento);
-        $stmt2->execute();
-
-        // 🔹 FORNECEDOR
-        $stmt3 = $conn->prepare("INSERT INTO fornecedor 
-        (nome, cnpj, produto_calca, preco)
-        VALUES (?, ?, ?, ?)");
-
-        $stmt3->bind_param("siii", $nomeF, $cnpjF, $produto, $precoForn);
-        $stmt3->execute();
-
-        // 🔹 ESTOQUE
-        $stmt4 = $conn->prepare("INSERT INTO estoque 
-        (qntdo_calca, preco_fornecedor, preco_venda, cnpj)
-        VALUES (?, ?, ?, ?)");
-
-        $stmt4->bind_param("iiii", $qnt, $precoForn, $precoVenda, $cnpjF);
-        $stmt4->execute();
-
-        $estoque_id = $conn->insert_id;
-
-        // 🔹 VENDEDOR (AGORA CADASTRA)
-        $stmt6 = $conn->prepare("INSERT INTO vendedor 
-        (nome, qntdo_vendas, cliente_vendas)
-        VALUES (?, ?, ?)");
-
-        $stmt6->bind_param("sii", $nomeV, $qntVendas, $clientesV);
-        $stmt6->execute();
-
-        $vendedor_id = $conn->insert_id;
-
-        // 🔹 VENDA (AGORA LIGADA AO VENDEDOR)
-        $valor_total = $quantidadeVenda * $precoVenda;
-        $data = date("Ymd");
-
-        $stmt5 = $conn->prepare("INSERT INTO venda 
-        (cpf_cliente, vendedor_id, estoque_id, quantidade, valor_total, data_venda)
-        VALUES (?, ?, ?, ?, ?, ?)");
-
-        $stmt5->bind_param("iiiiii", $cpf, $vendedor_id, $estoque_id, $quantidadeVenda, $valor_total, $data);
-
-        if ($stmt5->execute()) {
-            echo "SISTEMA COMPLETO COM VENDEDOR FUNCIONANDO!";
-        } else {
-            echo "Erro: " . $stmt5->error;
-        }
-
-        $stmt1->close();
-        $stmt2->close();
-        $stmt3->close();
-        $stmt4->close();
-        $stmt5->close();
-        $stmt6->close();
-    }
-}
-
-$conn->close();
-?>
-
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Sistema Loja Completo</title>
+    <title>Cadastro de Cliente</title>
 </head>
 <body>
 
-<h1>SISTEMA COMPLETO</h1>
+<h2>Cadastro de Cliente</h2>
 
-<form method="POST">
+<form method="POST" action="">
+    <label>Nome:</label><br>
+    <input type="text" name="nome" required><br><br>
 
-<h2>Cliente</h2>
-Nome: <input type="text" name="nome"><br><br>
-CPF: <input type="number" name="cpf"><br><br>
+    <label>CPF:</label><br>
+    <input type="number" name="cpf" required><br><br>
 
-<h2>Endereço</h2>
-Endereço: <input type="text" name="endereco"><br><br>
-Rua: <input type="text" name="rua"><br><br>
-Bairro: <input type="text" name="bairro"><br><br>
-CEP: <input type="number" name="cep"><br><br>
-Número: <input type="number" name="numero"><br><br>
-Complemento: <input type="text" name="complemento"><br><br>
+    <label>Endereço:</label><br>
+    <input type="text" name="endereco" required><br><br>
 
-<h2>Fornecedor</h2>
-Nome: <input type="text" name="nome_fornecedor"><br><br>
-CNPJ: <input type="number" name="cnpj_fornecedor"><br><br>
-Produto: <input type="number" name="produto_calca"><br><br>
-Preço fornecedor: <input type="number" name="preco_fornecedor"><br><br>
+    <button type="submit">Enviar</button>
+</form>
 
-<h2>Estoque</h2>
-Quantidade de calça: <input type="number" name="qntdo_calca"><br><br>
-Preço venda: <input type="number" name="preco_venda"><br><br>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cadastro de Estoque</title>
+</head>
+<body>
 
-<h2>Vendedor</h2>
-Nome: <input type="text" name="nome_vendedor"><br><br>
-Quantidade de vendas: <input type="number" name="qntdo_vendas"><br><br>
-Clientes atendidos: <input type="number" name="cliente_vendas"><br><br>
+<h2>Cadastro de Estoque</h2>
 
-<h2>Venda</h2>
-Quantidade vendida: <input type="number" name="quantidade"><br><br>
+<form method="POST" action="">
+    
+    <label>Quantidade de Calça:</label><br>
+    <input type="number" name="quantidade_calca" required><br><br>
 
-<button type="submit">Cadastrar Tudo</button>
+    <label>Preço do Fornecedor:</label><br>
+    <input type="number" name="preco_fornecedor" required><br><br>
+
+    <label>Preço de Venda:</label><br>
+    <input type="number" name="preco_venda" required><br><br>
+
+    <label>CNPJ:</label><br>
+    <input type="number" name="cnpj" required><br><br>
+
+    <button type="submit">Cadastrar</button>
+
+</form>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cadastro de Fornecedor</title>
+</head>
+<body>
+
+<h2>Cadastro de Fornecedor</h2>
+
+<form method="POST" action="">
+
+    <label>Nome:</label><br>
+    <input type="text" name="nome" required><br><br>
+
+    <label>CNPJ:</label><br>
+    <input type="number" name="cnpj" required><br><br>
+
+    <label>Quantidade de Produto:</label><br>
+    <input type="number" name="quantidade_produto" required><br><br>
+
+    <label>Preço:</label><br>
+    <input type="number" name="preco" required><br><br>
+
+    <label>Endereço:</label><br>
+    <input type="text" name="endereco" required><br><br>
+
+    <button type="submit">Cadastrar</button>
+
+</form>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cadastro de Venda</title>
+</head>
+<body>
+
+<h2>Cadastro de Venda</h2>
+
+<form method="POST" action="">
+
+    <label>CPF do Cliente:</label><br>
+    <input type="number" name="cpf_cliente" required><br><br>
+
+    <label>Nome do Vendedor:</label><br>
+    <input type="text" name="nome_vendedor" required><br><br>
+
+    <label>Quantidade em Estoque:</label><br>
+    <input type="number" name="quantidade_estoque" required><br><br>
+
+    <label>Valor Total:</label><br>
+    <input type="number" name="valor_total" required><br><br>
+
+    <label>Data da Venda:</label><br>
+    <input type="number" name="data_venda" placeholder="Ex: 20260407" required><br><br>
+
+    <button type="submit">Cadastrar</button>
+
+</form>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cadastro de Vendedor</title>
+</head>
+<body>
+
+<h2>Cadastro de Vendedor</h2>
+
+<form method="POST" action="">
+
+    <label>Nome:</label><br>
+    <input type="text" name="nome" required><br><br>
+
+    <label>Quantidade de Vendas:</label><br>
+    <input type="number" name="quantidade_vendas" required><br><br>
+
+    <label>Clientes Atendidos:</label><br>
+    <input type="number" name="cliente_vendas" required><br><br>
+
+    <button type="submit">Cadastrar</button>
 
 </form>
 
