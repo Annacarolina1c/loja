@@ -1,0 +1,164 @@
+CREATE TABLE `cliente` (
+  `cliente_id` int(11) NOT NULL,
+  `nome` varchar(100) NOT NULL,
+  `cpf` int(11) NOT NULL,
+  `endereco_cliente` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `endereco`
+--
+
+CREATE TABLE `endereco` (
+  `id` int(11) NOT NULL,
+  `rua` varchar(100) DEFAULT NULL,
+  `numero` varchar(10) DEFAULT NULL,
+  `bairro` varchar(50) DEFAULT NULL,
+  `cidade` varchar(50) DEFAULT NULL,
+  `estado` varchar(50) DEFAULT NULL,
+  `cep` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `estoque`
+--
+
+CREATE TABLE `estoque` (
+  `estoque_id` int(11) NOT NULL,
+  `quantidade_calca` int(5) NOT NULL,
+  `preco_fornecedor` int(5) NOT NULL,
+  `preco_venda` int(5) NOT NULL,
+  `cnpj_endereco` int(14) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `fornecedor`
+--
+
+CREATE TABLE `fornecedor` (
+  `fornecedor_id` int(11) NOT NULL,
+  `nome_fornecedor` varchar(100) NOT NULL,
+  `cnpj` int(14) NOT NULL,
+  `quantidade_produto` int(3) NOT NULL,
+  `preco` int(5) NOT NULL,
+  `endereco_fornecedor` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `venda`
+--
+
+CREATE TABLE `venda` (
+  `venda_id` int(11) NOT NULL,
+  `cpf_cliente` int(11) NOT NULL,
+  `nome_vendedor` varchar(100) NOT NULL,
+  `quantidade_estoque` int(3) NOT NULL,
+  `valor_total` int(5) NOT NULL,
+  `data_venda` int(8) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `vendedor`
+--
+
+CREATE TABLE `vendedor` (
+  `vendedor_id` int(11) NOT NULL,
+  `nome` varchar(100) NOT NULL,
+  `quantidade_vendas` int(5) NOT NULL,
+  `cliente_vendas` int(5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Índices para tabelas despejadas
+--
+
+--
+-- Índices de tabela `cliente`
+--
+ALTER TABLE `cliente`
+  ADD PRIMARY KEY (`cliente_id`);
+
+--
+-- Índices de tabela `endereco`
+--
+ALTER TABLE `endereco`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Índices de tabela `estoque`
+--
+ALTER TABLE `estoque`
+  ADD PRIMARY KEY (`estoque_id`);
+
+--
+-- Índices de tabela `fornecedor`
+--
+ALTER TABLE `fornecedor`
+  ADD PRIMARY KEY (`fornecedor_id`);
+
+--
+-- Índices de tabela `venda`
+--
+ALTER TABLE `venda`
+  ADD PRIMARY KEY (`venda_id`);
+
+--
+-- Índices de tabela `vendedor`
+--
+ALTER TABLE `vendedor`
+  ADD PRIMARY KEY (`vendedor_id`);
+
+--
+-- AUTO_INCREMENT para tabelas despejadas
+--
+
+--
+-- AUTO_INCREMENT de tabela `cliente`
+--
+ALTER TABLE `cliente`
+  MODIFY `cliente_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `endereco`
+--
+ALTER TABLE `endereco`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `estoque`
+--
+ALTER TABLE `estoque`
+  MODIFY `estoque_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `fornecedor`
+--
+ALTER TABLE `fornecedor`
+  MODIFY `fornecedor_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `venda`
+--
+ALTER TABLE `venda`
+  MODIFY `venda_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `vendedor`
+--
+ALTER TABLE `vendedor`
+  MODIFY `vendedor_id` int(11) NOT NULL AUTO_INCREMENT;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
